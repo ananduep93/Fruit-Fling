@@ -10,6 +10,16 @@
   <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader-logo">🍎</div>
+    <div class="loader-title">Fruit Fling</div>
+    <div class="loader-bar-container">
+      <div class="loader-bar"></div>
+    </div>
+    <div class="loader-text">Loading Assets...</div>
+  </div>
+
   <!-- Portrait Orientation Warning Screen -->
   <div id="orientation-warning">
     <div class="rotate-icon">🔄</div>
@@ -28,7 +38,6 @@
         <!-- Top Left Info -->
         <div class="hud-panel hud-left">
           <button class="hud-btn" id="hud-pause-btn">⏸</button>
-          <div class="hud-score">Score: <span id="score-val">0</span></div>
           <div style="font-size: 14px; font-weight: bold; margin-left: 10px;" id="hud-level-name">World 1 - Level 1</div>
         </div>
 
@@ -60,6 +69,10 @@
             <button class="btn-primary" id="play-btn">Play Game</button>
             <button class="btn-secondary" id="shop-btn">Cosmetics Shop</button>
             <button class="btn-secondary" id="settings-btn">Settings</button>
+          </div>
+          <div class="menu-footer">
+            <a href="privacy.html" target="_blank" class="footer-link">Privacy Policy</a> | 
+            <a href="terms.html" target="_blank" class="footer-link">Terms of Use</a>
           </div>
         </div>
       </div>
@@ -166,16 +179,12 @@
           </div>
           <div class="score-stats">
             <div class="score-row">
-              <span>Level Score:</span>
-              <span class="score-row-value" id="v-score-val">0</span>
-            </div>
-            <div class="score-row">
-              <span>High Score:</span>
-              <span class="score-row-value" id="v-high-score-val">0</span>
-            </div>
-            <div class="score-row">
               <span>Coins Earned:</span>
               <span class="score-row-value" style="color: var(--primary);" id="v-coins-val">+0</span>
+            </div>
+            <div class="score-row">
+              <span>Total Coins:</span>
+              <span class="score-row-value" id="v-total-coins-val">0</span>
             </div>
           </div>
           <div class="modal-buttons">
@@ -193,12 +202,8 @@
           <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 15px;" id="defeat-message">No fruits left, and monkeys survived...</p>
           <div class="score-stats">
             <div class="score-row">
-              <span>Your Score:</span>
-              <span class="score-row-value" id="d-score-val">0</span>
-            </div>
-            <div class="score-row">
-              <span>High Score:</span>
-              <span class="score-row-value" id="d-high-score-val">0</span>
+              <span>Coins Balance:</span>
+              <span class="score-row-value" id="d-coins-val">0</span>
             </div>
           </div>
           <div class="modal-buttons">
@@ -224,6 +229,13 @@
           <button class="btn-primary tutorial-btn" id="tutorial-close-btn">Got It!</button>
         </div>
       </div>
+
+      <!-- Fullscreen Toggle Button -->
+      <button id="fullscreen-btn" class="fullscreen-btn" title="Enter Fullscreen">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        </svg>
+      </button>
 
     </div>
   </div>

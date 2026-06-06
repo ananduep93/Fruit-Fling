@@ -390,9 +390,10 @@ class GameController {
     }
 
     // Set labels
-    document.getElementById('v-score-val').innerText = this.levelScore;
-    document.getElementById('v-high-score-val').innerText = storage.getLevelHighScore(lvl.id);
-    document.getElementById('v-coins-val').innerText = `+${coinsEarned}`;
+    const vCoinsEarned = document.getElementById('v-coins-val');
+    if (vCoinsEarned) vCoinsEarned.innerText = `+${coinsEarned}`;
+    const vTotalCoins = document.getElementById('v-total-coins-val');
+    if (vTotalCoins) vTotalCoins.innerText = storage.getCoins();
 
     // Play jingle
     audio.playSfx('victory');
@@ -424,8 +425,8 @@ class GameController {
   showDefeatScreen() {
     const lvl = WORLDS[this.currentWorldIndex].levels[this.currentLevelIndex];
     
-    document.getElementById('d-score-val').innerText = this.levelScore;
-    document.getElementById('d-high-score-val').innerText = storage.getLevelHighScore(lvl.id);
+    const dCoins = document.getElementById('d-coins-val');
+    if (dCoins) dCoins.innerText = storage.getCoins();
     
     audio.playSfx('defeat');
   }
@@ -717,6 +718,85 @@ class GameController {
         worldsContainer.scrollBy({ left: 270, behavior: 'smooth' });
       };
     }
+
+    // Fullscreen button bindings
+    const fsBtn = document.getElementById('fullscreen-btn');
+    if (fsBtn) {
+      fsBtn.onclick = () => {
+        audio.playSfx('click');
+        this.toggleFullscreen();
+      };
+    }
+
+    // Fullscreen change events
+    const fsEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+    fsEvents.forEach(evt => {
+      document.addEventListener(evt, () => {
+        this.updateFullscreenButton();
+      });
+    });
+  }
+
+  toggleFullscreen() {
+    const doc = window.document;
+    const docEl = doc.documentElement;
+
+    const requestFullScreen =
+      docEl.requestFullscreen ||
+      docEl.webkitRequestFullScreen ||
+      docEl.mozRequestFullScreen ||
+      docEl.msRequestFullscreen;
+    const cancelFullScreen =
+      doc.exitFullscreen ||
+      doc.webkitExitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.msExitFullscreen;
+
+    const fullscreenElement =
+      doc.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement;
+
+    if (!fullscreenElement) {
+      if (requestFullScreen) {
+        requestFullScreen.call(docEl).catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      }
+    } else {
+      if (cancelFullScreen) {
+        cancelFullScreen.call(doc);
+      }
+    }
+  }
+
+  updateFullscreenButton() {
+    const doc = window.document;
+    const fullscreenElement =
+      doc.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement;
+
+    const btn = document.getElementById('fullscreen-btn');
+    if (!btn) return;
+
+    if (fullscreenElement) {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 14h6v6m10-6h-6v6M4 10h6V4m10 6h-6V4" />
+        </svg>
+      `;
+      btn.setAttribute('title', 'Exit Fullscreen');
+    } else {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        </svg>
+      `;
+      btn.setAttribute('title', 'Enter Fullscreen');
+    }
   }
 
   // --- DRAG INPUTS GESTURE RESOLUTION ---
@@ -861,15 +941,43 @@ class GameController {
 
   // --- STATS HUD UPDATERS ---
   updateHUD() {
-    document.getElementById('score-val').innerText = this.levelScore;
-    
     // Double bind coin counts in HUD and Shop
     const coins = storage.getCoins();
-    document.getElementById('coins-val').innerText = coins;
+    const coinsVal = document.getElementById('coins-val');
+    if (coinsVal) {
+      coinsVal.innerText = coins;
+    }
     const shopCoinsLabel = document.getElementById('shop-coins-val');
     if (shopCoinsLabel) {
       shopCoinsLabel.innerText = coins;
     }
+  }
+
+  swapActiveFruit(queueIndex) {
+    if (!this.activeFruit || this.activeFruit.isLaunched) return;
+    
+    // Play SFX
+    audio.playSfx('click');
+    
+    // Remove the current active fruit body from physics world and fruitsOnField
+    physics.removeBody(this.activeFruit.body);
+    this.fruitsOnField = this.fruitsOnField.filter(f => f !== this.activeFruit);
+    
+    // Swap the types
+    const currentType = this.activeFruit.type;
+    const selectedType = this.fruitsQueue[queueIndex];
+    this.fruitsQueue[queueIndex] = currentType;
+    
+    // Create new fruit body at slingshot anchor
+    const fruit = new Fruit(SLINGSHOT_ANCHOR.x, SLINGSHOT_ANCHOR.y, selectedType);
+    const body = physics.addFruitBody(fruit);
+    Matter.Body.setStatic(body, true);
+    
+    this.activeFruit = fruit;
+    this.fruitsOnField.push(fruit);
+    
+    // Re-render UI
+    this.renderFruitQueue();
   }
 
   renderFruitQueue() {
@@ -884,11 +992,18 @@ class GameController {
       queuePanel.appendChild(activeIcon);
     }
 
-    // Show remaining in queue
-    this.fruitsQueue.forEach(type => {
+    // Show remaining in queue with click-to-swap triggers
+    this.fruitsQueue.forEach((type, index) => {
       const icon = document.createElement('div');
       icon.className = 'queue-fruit-icon';
       icon.innerText = this.getFruitEmoji(type);
+      
+      if (this.activeFruit && !this.activeFruit.isLaunched) {
+        icon.style.cursor = 'pointer';
+        icon.title = 'Click to swap fruit';
+        icon.onclick = () => this.swapActiveFruit(index);
+      }
+      
       queuePanel.appendChild(icon);
     });
   }
@@ -1421,4 +1536,10 @@ const game = new GameController();
 window.game = game;
 window.addEventListener('load', () => {
   game.init();
+  const loader = document.getElementById('loading-screen');
+  if (loader) {
+    setTimeout(() => {
+      loader.classList.add('fade-out');
+    }, 500);
+  }
 });
