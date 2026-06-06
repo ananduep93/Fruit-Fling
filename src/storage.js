@@ -1,6 +1,6 @@
 // Storage Manager for saving game progress and unlockables
 
-const STORAGE_KEY = 'fruit_fling_save_data';
+const STORAGE_KEY = 'fruit_fling_save_data_v3';
 
 const DEFAULT_SAVE = {
   unlockedWorlds: ['world_1'], // world_1, world_2, ...
