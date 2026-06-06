@@ -110,6 +110,14 @@ class StorageManager {
     return this.data.highScores[levelId] || 0;
   }
 
+  getTotalStars() {
+    let total = 0;
+    for (const key in this.data.completedLevels) {
+      total += this.data.completedLevels[key] || 0;
+    }
+    return total;
+  }
+
   // Cosmetics
   unlockItem(category, itemId) {
     const listKey = category === 'trail' ? 'unlockedTrails' : 

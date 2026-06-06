@@ -271,8 +271,11 @@ class GameController {
   }
 
   renderShop(category = 'trail') {
-    // Sync coins count in shop header
-    document.getElementById('shop-coins-val').innerText = storage.getCoins();
+    // Sync stars count in shop header
+    const shopStarsLabel = document.getElementById('shop-stars-val');
+    if (shopStarsLabel) {
+      shopStarsLabel.innerText = `${storage.getTotalStars()}/81`;
+    }
 
     const container = document.getElementById('shop-items-container');
     container.innerHTML = '';
@@ -311,7 +314,7 @@ class GameController {
       }
 
       let btnClass = 'buy';
-      let btnLabel = `🪙 ${item.cost}`;
+      let btnLabel = `Unlocks at ⭐${item.requiredStars}`;
       
       if (item.isUnlocked) {
         if (item.isSelected) {
@@ -369,16 +372,8 @@ class GameController {
       }
     }
 
-    // Calculate coins award: stars * 10 * worldNumber
-    const worldNum = this.currentWorldIndex + 1; // 1-based
-    let coinsEarned = stars * 10 * worldNum;
-    if (storage.getSelectedItem('trail') === 'rainbow') {
-      coinsEarned = Math.round(coinsEarned * 1.10); // +10% coins
-    }
-
-    // Save progress & award coins
+    // Save progress
     storage.completeLevel(lvl.id, stars, this.levelScore);
-    storage.addCoins(coinsEarned);
     
     // Check if we unlock the next world
     // If we completed level 3 of world 1, unlock world 2
@@ -390,10 +385,8 @@ class GameController {
     }
 
     // Set labels
-    const vCoinsEarned = document.getElementById('v-coins-val');
-    if (vCoinsEarned) vCoinsEarned.innerText = `+${coinsEarned}`;
-    const vTotalCoins = document.getElementById('v-total-coins-val');
-    if (vTotalCoins) vTotalCoins.innerText = storage.getCoins();
+    const vTotalStars = document.getElementById('v-total-stars-val');
+    if (vTotalStars) vTotalStars.innerText = `${storage.getTotalStars()}/81`;
 
     // Play jingle
     audio.playSfx('victory');
@@ -425,8 +418,8 @@ class GameController {
   showDefeatScreen() {
     const lvl = WORLDS[this.currentWorldIndex].levels[this.currentLevelIndex];
     
-    const dCoins = document.getElementById('d-coins-val');
-    if (dCoins) dCoins.innerText = storage.getCoins();
+    const dTotalStars = document.getElementById('d-total-stars-val');
+    if (dTotalStars) dTotalStars.innerText = `${storage.getTotalStars()}/81`;
     
     audio.playSfx('defeat');
   }
@@ -941,15 +934,15 @@ class GameController {
 
   // --- STATS HUD UPDATERS ---
   updateHUD() {
-    // Double bind coin counts in HUD and Shop
-    const coins = storage.getCoins();
-    const coinsVal = document.getElementById('coins-val');
-    if (coinsVal) {
-      coinsVal.innerText = coins;
+    // Double bind star counts in HUD and Shop
+    const stars = storage.getTotalStars();
+    const starsVal = document.getElementById('stars-val');
+    if (starsVal) {
+      starsVal.innerText = `${stars}/81`;
     }
-    const shopCoinsLabel = document.getElementById('shop-coins-val');
-    if (shopCoinsLabel) {
-      shopCoinsLabel.innerText = coins;
+    const shopStarsLabel = document.getElementById('shop-stars-val');
+    if (shopStarsLabel) {
+      shopStarsLabel.innerText = `${stars}/81`;
     }
   }
 

@@ -43,7 +43,7 @@
 
         <!-- Top Right Info -->
         <div class="hud-panel hud-right">
-          <div class="hud-coins">🪙 <span id="coins-val">0</span></div>
+          <div class="hud-stars">⭐ <span id="stars-val">0/81</span></div>
           <button class="hud-btn" id="hud-restart-btn">🔄</button>
         </div>
 
@@ -108,7 +108,7 @@
         <div class="screen-header">
           <button class="back-btn" id="shop-back-btn">←</button>
           <h2>Cosmetic Shop</h2>
-          <div class="hud-coins" style="margin-left: auto; font-size: 20px;">🪙 <span id="shop-coins-val">0</span></div>
+          <div class="hud-stars" style="margin-left: auto; font-size: 20px;">⭐ <span id="shop-stars-val">0/81</span></div>
         </div>
         <div class="shop-container">
           <div class="shop-tabs">
@@ -179,12 +179,8 @@
           </div>
           <div class="score-stats">
             <div class="score-row">
-              <span>Coins Earned:</span>
-              <span class="score-row-value" style="color: var(--primary);" id="v-coins-val">+0</span>
-            </div>
-            <div class="score-row">
-              <span>Total Coins:</span>
-              <span class="score-row-value" id="v-total-coins-val">0</span>
+              <span>Total Stars Earned:</span>
+              <span class="score-row-value" id="v-total-stars-val">0/81</span>
             </div>
           </div>
           <div class="modal-buttons">
@@ -202,8 +198,8 @@
           <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 15px;" id="defeat-message">No fruits left, and monkeys survived...</p>
           <div class="score-stats">
             <div class="score-row">
-              <span>Coins Balance:</span>
-              <span class="score-row-value" id="d-coins-val">0</span>
+              <span>Total Stars:</span>
+              <span class="score-row-value" id="d-total-stars-val">0/81</span>
             </div>
           </div>
           <div class="modal-buttons">

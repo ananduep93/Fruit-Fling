@@ -463,7 +463,7 @@ body, html {
   color: #fff;
 }
 
-.hud-coins {
+.hud-stars {
   font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
@@ -1160,7 +1160,7 @@ body, html {
     gap: 8px !important;
   }
   
-  .hud-score, .hud-coins {
+  .hud-score, .hud-stars {
     font-size: 14px !important;
   }
   
