@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fruit Fling | Defeat the Monkeys & Reclaim the Kingdom</title>
+  <meta name="description" content="Use a giant slingshot to launch powerful fruits, smash monkey structures, and reclaim the Fruit Kingdom in this satisfying 2.5D physics puzzle game.">
+  <!-- Favicon placeholder or icon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍎</text></svg>">
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Main Game Viewport (16:9 Aspect Ratio) -->
+    <div class="game-viewport">
+      <!-- HTML5 Canvas for Game Rendering -->
+      <canvas id="game-canvas"></canvas>
+
+      <!-- Gameplay HUD Overlay -->
+      <div class="hud-layer hidden" id="gameplay-hud">
+        <!-- Top Left Info -->
+        <div class="hud-panel hud-left">
+          <button class="hud-btn" id="hud-pause-btn">⏸</button>
+          <div class="hud-score">Score: <span id="score-val">0</span></div>
+          <div style="font-size: 14px; font-weight: bold; margin-left: 10px;" id="hud-level-name">World 1 - Level 1</div>
+        </div>
+
+        <!-- Top Right Info -->
+        <div class="hud-panel hud-right">
+          <div class="hud-coins">🪙 <span id="coins-val">0</span></div>
+          <button class="hud-btn" id="hud-restart-btn">🔄</button>
+        </div>
+
+        <!-- Bottom Left: Upcoming Fruit Queue -->
+        <div class="fruit-queue-panel" id="fruit-queue">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Bottom Right: Special Ability Button -->
+        <div class="ability-trigger-overlay hidden" id="ability-overlay">
+          <button class="ability-btn" id="ability-trigger-btn">TAP TO BOOST</button>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: MAIN MENU -->
+      <div class="ui-screen active" id="menu-screen">
+        <div class="main-menu-content">
+          <div class="logo-container">
+            <h1 class="game-title" id="main-title">Fruit Fling</h1>
+            <div class="game-subtitle">Monkey Invasion</div>
+          </div>
+          <div class="menu-buttons">
+            <button class="btn-primary" id="play-btn">Play Game</button>
+            <button class="btn-secondary" id="shop-btn">Cosmetics Shop</button>
+            <button class="btn-secondary" id="settings-btn">Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: WORLD SELECTION -->
+      <div class="ui-screen" id="world-select-screen">
+        <div class="screen-header">
+          <button class="back-btn" id="world-back-btn">←</button>
+          <h2>Select World</h2>
+        </div>
+        <div class="worlds-wrapper">
+          <button class="scroll-btn scroll-left" id="worlds-scroll-left">‹</button>
+          <div class="worlds-grid" id="worlds-container">
+            <!-- Populated dynamically -->
+          </div>
+          <button class="scroll-btn scroll-right" id="worlds-scroll-right">›</button>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: LEVEL SELECTION -->
+      <div class="ui-screen" id="level-select-screen">
+        <div class="screen-header">
+          <button class="back-btn" id="level-back-btn">←</button>
+          <h2 id="world-title-display">Level Select</h2>
+        </div>
+        <div class="levels-grid" id="levels-container">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- UI SCREEN: COSMETICS SHOP -->
+      <div class="ui-screen" id="shop-screen">
+        <div class="screen-header">
+          <button class="back-btn" id="shop-back-btn">←</button>
+          <h2>Cosmetic Shop</h2>
+          <div class="hud-coins" style="margin-left: auto; font-size: 20px;">🪙 <span id="shop-coins-val">0</span></div>
+        </div>
+        <div class="shop-container">
+          <div class="shop-tabs">
+            <button class="shop-tab active" data-category="trail">Fruit Trails</button>
+            <button class="shop-tab" data-category="slingshot">Slingshots</button>
+          </div>
+          <div class="shop-content">
+            <div class="shop-grid" id="shop-items-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: SETTINGS -->
+      <div class="ui-screen" id="settings-screen">
+        <div class="screen-header">
+          <button class="back-btn" id="settings-back-btn">←</button>
+          <h2>Settings</h2>
+        </div>
+        <div class="settings-panel">
+          <div class="setting-row">
+            <span class="setting-label">Sound Effects</span>
+            <input type="range" class="slider" id="sound-volume" min="0" max="1" step="0.05">
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Background Music</span>
+            <input type="range" class="slider" id="music-volume" min="0" max="1" step="0.05">
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Screen Shake</span>
+            <input type="checkbox" id="shake-toggle" style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary);">
+          </div>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: PAUSE -->
+      <div class="ui-screen" id="pause-screen">
+        <div class="modal-container">
+          <h2 class="modal-title" style="color: #fff;">Game Paused</h2>
+          <div class="menu-buttons" style="margin: 0 auto 30px; width: 100%;">
+            <button class="btn-primary" id="pause-resume-btn">Resume</button>
+            <button class="btn-secondary" id="pause-restart-btn">Restart Level</button>
+            <button class="btn-secondary" id="pause-levels-btn">Level Select</button>
+            <button class="btn-secondary" id="pause-menu-btn">Main Menu</button>
+          </div>
+          <div class="settings-panel" style="width: 100%; background: rgba(0,0,0,0.25); box-shadow: none;">
+            <div class="setting-row">
+              <span class="setting-label">Sound</span>
+              <input type="range" class="slider" id="pause-sound-volume" min="0" max="1" step="0.05">
+            </div>
+            <div class="setting-row">
+              <span class="setting-label">Music</span>
+              <input type="range" class="slider" id="pause-music-volume" min="0" max="1" step="0.05">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: VICTORY -->
+      <div class="ui-screen" id="victory-screen">
+        <div class="modal-container">
+          <h2 class="modal-title victory-title">Victory!</h2>
+          <div class="stars-container">
+            <span class="modal-star" id="v-star-1">★</span>
+            <span class="modal-star" id="v-star-2">★</span>
+            <span class="modal-star" id="v-star-3">★</span>
+          </div>
+          <div class="score-stats">
+            <div class="score-row">
+              <span>Level Score:</span>
+              <span class="score-row-value" id="v-score-val">0</span>
+            </div>
+            <div class="score-row">
+              <span>High Score:</span>
+              <span class="score-row-value" id="v-high-score-val">0</span>
+            </div>
+            <div class="score-row">
+              <span>Coins Earned:</span>
+              <span class="score-row-value" style="color: var(--primary);" id="v-coins-val">+0</span>
+            </div>
+          </div>
+          <div class="modal-buttons">
+            <button class="btn-secondary" id="v-levels-btn">Levels</button>
+            <button class="btn-secondary" id="v-replay-btn">Replay</button>
+            <button class="btn-primary" id="v-next-btn" style="font-size: 18px; padding: 12px 24px;">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: DEFEAT -->
+      <div class="ui-screen" id="defeat-screen">
+        <div class="modal-container">
+          <h2 class="modal-title defeat-title">Failed!</h2>
+          <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 15px;" id="defeat-message">No fruits left, and monkeys survived...</p>
+          <div class="score-stats">
+            <div class="score-row">
+              <span>Your Score:</span>
+              <span class="score-row-value" id="d-score-val">0</span>
+            </div>
+            <div class="score-row">
+              <span>High Score:</span>
+              <span class="score-row-value" id="d-high-score-val">0</span>
+            </div>
+          </div>
+          <div class="modal-buttons">
+            <button class="btn-secondary" id="d-levels-btn">Levels</button>
+            <button class="btn-primary" id="d-replay-btn" style="font-size: 18px; padding: 12px 24px;">Try Again</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI SCREEN: TUTORIAL GUIDE -->
+      <div class="tutorial-overlay hidden" id="tutorial-panel">
+        <div class="tutorial-card">
+          <h3 class="tutorial-title">💡 How to Play</h3>
+          <p class="tutorial-text">Drag the fruit backwards on the slingshot and release to launch it!</p>
+          <p class="tutorial-text"><strong>🔥 Special Abilities:</strong> Click/tap anywhere on the screen while the fruit is in the air to activate its power!</p>
+          <div class="tutorial-abilities">
+            <div class="tutorial-ability-item">🍎 <strong>Apple:</strong> Apple Smash (slams downwards)</div>
+            <div class="tutorial-ability-item">🍌 <strong>Banana:</strong> Banana Boost (extra speed & lift)</div>
+            <div class="tutorial-ability-item">🥥 <strong>Coconut:</strong> Coco Bomb (explodes mid-air/impact)</div>
+            <div class="tutorial-ability-item">🍓 <strong>Strawberry:</strong> Grow (becomes giant & heavy)</div>
+            <div class="tutorial-ability-item">🍉 <strong>Watermelon:</strong> Melon Split (splits into 3)</div>
+          </div>
+          <button class="btn-primary tutorial-btn" id="tutorial-close-btn">Got It!</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="src/lib/matter.min.js"></script>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
