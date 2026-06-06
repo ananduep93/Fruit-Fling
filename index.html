@@ -10,6 +10,13 @@
   <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
+  <!-- Portrait Orientation Warning Screen -->
+  <div id="orientation-warning">
+    <div class="rotate-icon">🔄</div>
+    <div class="warning-title">Landscape Required</div>
+    <div class="warning-text">Please rotate your device to landscape orientation to play the game!</div>
+  </div>
+
   <div id="app">
     <!-- Main Game Viewport (16:9 Aspect Ratio) -->
     <div class="game-viewport">
@@ -222,6 +229,15 @@
   </div>
 
   <script src="src/lib/matter.min.js"></script>
-  <script type="module" src="./src/main.js"></script>
+  <script src="src/storage.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/particles.js"></script>
+  <script src="src/physics.js"></script>
+  <script src="src/levels.js"></script>
+  <script src="src/shop.js"></script>
+  <script src="src/fruit.js"></script>
+  <script src="src/monkey.js"></script>
+  <script src="src/structure.js"></script>
+  <script src="src/main.js"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@ const STORAGE_KEY = 'fruit_fling_save_data';
 const DEFAULT_SAVE = {
   unlockedWorlds: ['world_1'], // world_1, world_2, ...
   completedLevels: {}, // { level_id: stars_count }
-  coins: 100, // start with some coins to test the shop
+  coins: 0, // start with some coins to test the shop
   goldenBananas: 0,
   unlockedTrails: ['classic'], // classic, rainbow, fire, sparkle, bubble
   unlockedSlingshots: ['classic'], // classic, golden, laser, bubble, futuristic
@@ -160,4 +160,5 @@ class StorageManager {
   }
 }
 
-export const storage = new StorageManager();
+const storage = new StorageManager();
+window.storage = storage;

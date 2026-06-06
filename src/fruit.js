@@ -1,14 +1,9 @@
 // Fruit class and specialized sub-types for Fruit Fling
 
-const Matter = window.Matter;
-import { physics } from './physics.js';
-import { particles } from './particles.js';
-import { audio } from './audio.js';
-import { storage } from './storage.js';
+var Matter = window.Matter;
+var { Body, Vector } = Matter;
 
-const { Body, Vector } = Matter;
-
-export class Fruit {
+class Fruit {
   constructor(x, y, type = 'apple') {
     this.x = x;
     this.y = y;
@@ -672,3 +667,4 @@ export class Fruit {
     ctx.restore();
   }
 }
+window.Fruit = Fruit;

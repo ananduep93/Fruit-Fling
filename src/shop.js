@@ -1,9 +1,6 @@
 // Shop Cosmetics Catalog for Fruit Fling
 
-import { storage } from './storage.js';
-import { audio } from './audio.js';
-
-export const SHOP_CATALOG = {
+const SHOP_CATALOG = {
   trail: [
     { id: 'classic', name: 'Classic Smoke', desc: 'Standard puff trail. Standard stats.', cost: 0 },
     { id: 'rainbow', name: 'Rainbow Blast', desc: 'Beautiful cycle of vibrant colors. +10% score and coins!', cost: 80 },
@@ -75,4 +72,6 @@ class ShopManager {
   }
 }
 
-export const shop = new ShopManager();
+const shop = new ShopManager();
+window.shop = shop;
+window.SHOP_CATALOG = SHOP_CATALOG;

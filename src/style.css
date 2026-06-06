@@ -887,3 +887,54 @@ body, html {
   padding: 10px 24px;
   margin-top: 5px;
 }
+
+/* Portrait Orientation Warning Screen for Mobile */
+#orientation-warning {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1b 100%);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+}
+
+#orientation-warning .rotate-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: rotateDevice 2s infinite ease-in-out;
+}
+
+#orientation-warning .warning-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--primary);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+#orientation-warning .warning-text {
+  font-size: 16px;
+  color: var(--text-muted);
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+@keyframes rotateDevice {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@media (orientation: portrait) and (max-width: 1024px) {
+  #orientation-warning {
+    display: flex;
+  }
+}

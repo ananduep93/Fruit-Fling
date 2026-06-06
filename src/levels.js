@@ -1,6 +1,4 @@
-// Level definitions for Fruit Fling
-
-export const WORLDS = [
+const WORLDS = [
   {
     id: 'world_1',
     name: 'Jungle Village',
@@ -740,3 +738,4 @@ export const WORLDS = [
     ]
   }
 ];
+window.WORLDS = WORLDS;

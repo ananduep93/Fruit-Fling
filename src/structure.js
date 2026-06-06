@@ -1,13 +1,9 @@
 // Structure Blocks for Fruit Fling
 
-const Matter = window.Matter;
-import { physics } from './physics.js';
-import { particles } from './particles.js';
-import { audio } from './audio.js';
+var Matter = window.Matter;
+var { Body } = Matter;
 
-const { Body } = Matter;
-
-export const MATERIALS = {
+const MATERIALS = {
   wood: {
     color: '#cd853f', // Peru brown
     sideColor: '#8b5a2b', // Darker brown
@@ -65,7 +61,7 @@ export const MATERIALS = {
   }
 };
 
-export class StructureBlock {
+class StructureBlock {
   constructor(x, y, width, height, shape = 'box', materialType = 'wood', angle = 0) {
     this.x = x;
     this.y = y;
@@ -319,3 +315,5 @@ export class StructureBlock {
     ctx.restore();
   }
 }
+window.MATERIALS = MATERIALS;
+window.StructureBlock = StructureBlock;

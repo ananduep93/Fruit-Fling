@@ -1,15 +1,6 @@
 // Fruit Fling Main Game Controller
 
-const Matter = window.Matter;
-import { storage } from './storage.js';
-import { audio } from './audio.js';
-import { particles } from './particles.js';
-import { physics } from './physics.js';
-import { Fruit } from './fruit.js';
-import { Monkey } from './monkey.js';
-import { StructureBlock } from './structure.js';
-import { WORLDS } from './levels.js';
-import { shop } from './shop.js';
+var Matter = window.Matter;
 
 const DEFAULT_CANVAS_WIDTH = 1280;
 const CANVAS_HEIGHT = 720;
@@ -62,6 +53,7 @@ class GameController {
     // 1. Core Systems init
     physics.init();
     particles.reset();
+    audio.startMusic();
 
     // 2. DOM Elements binding
     this.canvas = document.getElementById('game-canvas');
@@ -166,11 +158,10 @@ class GameController {
     screens.forEach(s => document.getElementById(s).classList.remove('active'));
     document.getElementById('gameplay-hud').classList.add('hidden');
 
-    audio.stopMusic();
-
     switch (this.state) {
       case 'MENU':
         document.getElementById('menu-screen').classList.add('active');
+        audio.startMusic();
         break;
       case 'WORLD_SELECT':
         this.renderWorldsList();
@@ -359,13 +350,28 @@ class GameController {
   showVictoryScreen() {
     const lvl = WORLDS[this.currentWorldIndex].levels[this.currentLevelIndex];
     
-    // Calculate stars (3 stars if score > star3, 2 stars if > star2, else 1 star)
-    let stars = 1;
-    if (this.levelScore >= lvl.star3) stars = 3;
-    else if (this.levelScore >= lvl.star2) stars = 2;
+    // Calculate stars based on the least amount of fruits used to clear the level
+    const totalFruits = lvl.fruits.length;
+    const fruitsLeft = this.fruitsQueue.length + (this.activeFruit && !this.activeFruit.isLaunched ? 1 : 0);
+    const fruitsUsed = totalFruits - fruitsLeft;
 
-    // Calculate coins award with trail buffs
-    let coinsEarned = lvl.coins;
+    let stars = 1;
+    if (fruitsUsed === 1) {
+      stars = 3;
+    } else {
+      const ratio = fruitsLeft / totalFruits;
+      if (ratio >= 0.5) {
+        stars = 3;
+      } else if (ratio > 0) {
+        stars = 2;
+      } else {
+        stars = 1;
+      }
+    }
+
+    // Calculate coins award: stars * 10 * worldNumber
+    const worldNum = this.currentWorldIndex + 1; // 1-based
+    let coinsEarned = stars * 10 * worldNum;
     if (storage.getSelectedItem('trail') === 'rainbow') {
       coinsEarned = Math.round(coinsEarned * 1.10); // +10% coins
     }
@@ -1416,4 +1422,3 @@ window.game = game;
 window.addEventListener('load', () => {
   game.init();
 });
-export default game;

@@ -1,13 +1,9 @@
 // Monkey targets for Fruit Fling
 
-const Matter = window.Matter;
-import { physics } from './physics.js';
-import { particles } from './particles.js';
-import { audio } from './audio.js';
+var Matter = window.Matter;
+var { Body, Constraint, World } = Matter;
 
-const { Body, Constraint, World } = Matter;
-
-export class Monkey {
+class Monkey {
   constructor(x, y, type = 'basic') {
     this.x = x;
     this.y = y;
@@ -554,3 +550,4 @@ export class Monkey {
     ctx.restore();
   }
 }
+window.Monkey = Monkey;

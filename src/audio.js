@@ -1,5 +1,4 @@
 // Procedural Web Audio API Sound Synthesizer
-import { storage } from './storage.js';
 const backgroundMusicUrl = './src/Music/Background music.mpeg';
 
 class AudioSynth {
@@ -632,4 +631,5 @@ class AudioSynth {
   }
 }
 
-export const audio = new AudioSynth();
+const audio = new AudioSynth();
+window.audio = audio;

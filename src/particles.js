@@ -1,7 +1,5 @@
 // Particle System for game juices: trails, dust, debris, explosions, and screen shake
 
-import { storage } from './storage.js';
-
 class ParticleSystem {
   constructor() {
     this.particles = [];
@@ -345,4 +343,5 @@ class ParticleSystem {
   }
 }
 
-export const particles = new ParticleSystem();
+const particles = new ParticleSystem();
+window.particles = particles;

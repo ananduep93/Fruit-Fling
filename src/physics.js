@@ -1,11 +1,8 @@
 // Matter.js Physics Engine Wrapper for Fruit Fling
 
-const Matter = window.Matter;
-import { particles } from './particles.js';
-import { audio } from './audio.js';
-import { storage } from './storage.js';
+var Matter = window.Matter;
 
-const { Engine, World, Bodies, Body, Composite, Vector, Events } = Matter;
+var { Engine, World, Bodies, Body, Composite, Vector, Events } = Matter;
 
 class PhysicsSystem {
   constructor() {
@@ -339,5 +336,5 @@ class PhysicsSystem {
   }
 }
 
-export const physics = new PhysicsSystem();
+const physics = new PhysicsSystem();
 window.physics = physics;
